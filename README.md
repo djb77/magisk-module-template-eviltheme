@@ -1,3 +1,20 @@
+# Magisk Module Template with built in EVilTheme Patcher
+Created by djb77 / XDA Developers
+
+Magisk Template Original Source: https://github.com/topjohnwu/magisk-module-template.git
+
+EVilTheme Original Source: https://github.com/aureljared/eviltheme.git
+
+# How to use EVilTheme
+(Example using /system/priv-app/SecSettings2.apk)
+
+1. In the eviltheme folder, go to system and make a folder called priv-app. Inside it, make another folder called SecSettings2.apk
+2. Now make folders as necessary, according to the location of the files you want to theme. For example, battery_icon_50.png is located in res/drawable-hdpi, so make a folder named res inside Settings.apk. Inside it, create a folder named drawable-hdpi, then paste your new battery_icon_50.png inside.
+3. Repeat step 2 until you've placed your theme files in their appropriate locations.
+4. When you're done, go back to the root folder of the theme (the one that contains eviltheme, engine, etc.) and put all the objects in a ZIP file. You should use Deflate compression with compression level on Normal, but if your theme is huge, you can safely try compressing using Deflate and the level set to Ultra or whatever high level is available.
+5. Test your mod.
+
+# How to Create A New Repo
 ## !! Please update this README.md file for online Repo submission !!
 You can edit your `README.md` within Github's online editor, it also has an preview button!  
 Check the [Markdown Cheat Sheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) for markdown syntaxes, it's super easy!  

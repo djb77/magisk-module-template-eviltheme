@@ -186,6 +186,9 @@ print_modname
 # Please leave this message in your flashable zip for credits :)
 ui_print "******************************"
 ui_print "Powered by Magisk (@topjohnwu)"
+ui_print " "
+ui_print "EVilTheme made by Spannaa@XDA"
+ui_print "Merged into Magisk by djb77"
 ui_print "******************************"
 
 ui_print "- Mounting /system(ro), /vendor(ro), /data, /cache"
@@ -263,6 +266,50 @@ mkdir -p $MODPATH
 # Copy files
 ui_print "- Copying files"
 unzip -o "$ZIP" "system/*" -d $MODPATH
+
+##########################################################################################
+# EVilTheme Mod integrated by djb77
+##########################################################################################
+
+# Copying EVilTheme Files
+ui_print "- Copying EVilTheme Files"
+mkdir -p /data/tmp/eviltheme
+chmod -R 777 /data/tmp/eviltheme
+unzip -o "$ZIP" engine/* -d /tmp
+unzip -o "$ZIP" eviltheme/* -d /data/tmp
+rm -f /data/tmp/eviltheme/system/placeholder
+
+# Execute EVilTheme
+ui_print "- Executing EVilTheme"
+chmod -R 775 /tmp/engine
+/tmp/engine/installtheme.sh
+
+# Resize Magisk image if needed
+payload_size_check "/tmp/magisk_tmp/*" "*"
+if [ -f "$IMG" ]; then
+  target_size_check $IMG
+  if [ "$reqSizeM" -gt "$curFreeM" ]; then
+    SIZE=$((((reqSizeM + curUsedM) / 32 + 2) * 32))
+    ui_print "- Resizing $IMG to ${SIZE}M..."
+    resize2fs $IMG ${SIZE}M
+  fi
+else
+  SIZE=$(((reqSizeM / 32 + 2) * 32));
+  ui_print "- Creating $IMG with size ${SIZE}M"
+  make_ext4fs -l ${SIZE}M -a /magisk -S $INSTALLER/common/file_contexts_image $IMG
+fi
+mount_image $IMG $MOUNTPATH
+if (! is_mounted $MOUNTPATH); then
+  ui_print "! $IMG mount failed... abort"
+  exit 1
+fi
+
+# Copy Patched Files to Magisk Module
+ui_print "- Copying Patched Files to Magisk Module"
+cp -rf /tmp/magisk_tmp/* $MODPATH
+rm -rf /tmp/magisk_tmp
+
+##########################################################################################
 
 # Handle replace folders
 for TARGET in $REPLACE; do
