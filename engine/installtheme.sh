@@ -103,6 +103,51 @@ theme(){
 	done
 }
 
+theme_framework(){
+	path="$1/$2" # system/framework
+	path_magisk="/tmp/magisk_tmp"
+
+	cd "$vrroot/$path/"
+	dir "$vrroot/apply/$path"
+
+	for f in *.apk; do
+		cd "$f"
+
+		# Copy APK
+		if [ "$lollipop" -eq "1" ]; then
+			appPath="$(friendlyname $f)/$f"
+			dir "$vrroot/apply/$path/$(friendlyname $f)"
+      dir "$path_magisk/$path/$(friendlyname $f)"
+			cp "/$path/$appPath" "$vrroot/apply/$path/$(friendlyname $f)/"
+		else
+			cp "/$path/$f" "$vrroot/apply/$path/"
+			appPath="$f"
+		fi
+
+		# Delete files in APK, if any
+		if [ -e "./delete.list" ]; then
+			readarray -t array < ./delete.list
+			for j in ${array[@]}; do
+				/tmp/engine/zip -d "$vrroot/apply/$path/$appPath.zip" "$j"
+			done
+			rm -f ./delete.list
+		fi
+
+		# Theme APK
+		mv "$vrroot/apply/$path/$appPath" "$vrroot/apply/$path/$appPath.zip"
+		/tmp/engine/zip -r "$vrroot/apply/$path/$appPath.zip" ./*
+		mv "$vrroot/apply/$path/$appPath.zip" "$vrroot/apply/$path/$appPath"
+
+		# Refresh bytecode if necessary
+		checkdex "$2" "$f"
+
+		# Finish up
+		$bb cp -f $vrroot/apply/$path/$appPath $path_magisk/$path/$appPath
+		chmod 644 $path_magisk/$path/$appPath
+		cd "$vrroot/$path/"
+	done
+}
+
 # Work directories
 vrroot="/data/tmp/eviltheme"
 dir "$vrroot/apply"
@@ -111,6 +156,7 @@ dir "$vrroot/apply"
 [ -d "$vrroot/system/app" ] && sysapps=1 || sysapps=0
 [ -d "$vrroot/system/priv-app" ] && privapps=1 || privapps=0
 [ -d "$vrroot/system/framework" ] && framework=1 || framework=0
+[ -d "$vrroot/system/framework/samsung-framework-res" ] && samsung_framework=1 || samsung_framework=0
 [ -d "$vrroot/preload/symlink/system/app" ] && preload=1 || preload=0
 
 # /system/app
@@ -131,6 +177,11 @@ fi
 # /system/framework
 if [ "$framework" -eq "1" ]; then
 	theme "system" "framework"
+fi
+
+# /system/framework/samsung-framework-res
+if [ "$samsung_framework" -eq "1" ]; then
+	theme_framework "system/framework" "samsung-framework-res"
 fi
 
 # Cleanup
