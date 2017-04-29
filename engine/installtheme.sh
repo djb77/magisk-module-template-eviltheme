@@ -80,6 +80,7 @@ theme(){
 		fi
 
 		# Delete files in APK, if any
+		mv "$vrroot/apply/$path/$appPath" "$vrroot/apply/$path/$appPath.zip"
 		if [ -e "./delete.list" ]; then
 			readarray -t array < ./delete.list
 			for j in ${array[@]}; do
@@ -89,7 +90,6 @@ theme(){
 		fi
 
 		# Theme APK
-		mv "$vrroot/apply/$path/$appPath" "$vrroot/apply/$path/$appPath.zip"
 		/tmp/engine/zip -r "$vrroot/apply/$path/$appPath.zip" ./*
 		mv "$vrroot/apply/$path/$appPath.zip" "$vrroot/apply/$path/$appPath"
 
@@ -125,6 +125,7 @@ theme_framework(){
 		fi
 
 		# Delete files in APK, if any
+		mv "$vrroot/apply/$path/$appPath" "$vrroot/apply/$path/$appPath.zip"
 		if [ -e "./delete.list" ]; then
 			readarray -t array < ./delete.list
 			for j in ${array[@]}; do
@@ -134,7 +135,6 @@ theme_framework(){
 		fi
 
 		# Theme APK
-		mv "$vrroot/apply/$path/$appPath" "$vrroot/apply/$path/$appPath.zip"
 		/tmp/engine/zip -r "$vrroot/apply/$path/$appPath.zip" ./*
 		mv "$vrroot/apply/$path/$appPath.zip" "$vrroot/apply/$path/$appPath"
 
